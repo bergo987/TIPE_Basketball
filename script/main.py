@@ -20,6 +20,8 @@ greenLower = (29, 86, 6)
 greenUpper = (64, 255, 255)
 redLower = (0,255,255)
 redUpper=(0,220,140)
+ballUpper = (25,255,255)
+ballLower = (25,180,160)
 pts = deque(maxlen=args["buffer"])
 # if a video path was not supplied, grab the reference
 # to the webcam 
@@ -48,7 +50,7 @@ while True:
 	# construct a mask for the color "green", then perform
 	# a series of dilations and erosions to remove any small
 	# blobs left in the mask
-	mask = cv2.inRange(hsv, greenLower, greenUpper)
+	mask = cv2.inRange(hsv, ballLower, ballUpper)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
 	# find contours in the mask and initialize the current
