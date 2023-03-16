@@ -22,3 +22,4 @@ Listes des sites utiles pour le TIPE
 - https://pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/
 - https://colorpicker.me/#d21313
 - https://piofthings.net/blog/opencv-baby-steps-4-building-a-hsv-calibrator
+- https://github.com/abhisavaliya/hsv_calibration/
