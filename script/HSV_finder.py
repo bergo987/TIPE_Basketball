@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 import time
 
-img = cv.imread('balle_de_calibration.jpg',cv.IMREAD_COLOR)
+img = cv.imread('/Users/hugo/Documents/Cours/Prepa/TIPE/Basket/TIPE_Baskettball/script/balle_de_calibration.jpg',cv.IMREAD_COLOR)
 img = cv.medianBlur(img,5)
 
 # Convert BGR to HSV
@@ -45,7 +45,7 @@ cv.createTrackbar('LowerV',window_name,0,255,nothing)
 cv.setTrackbarPos('LowerV',window_name, lv)
 
 font = cv.FONT_HERSHEY_SIMPLEX
-while(1):
+while(True):
     # Threshold the HSV image to get only blue colors
     mask = cv.inRange(hsv, lower_hsv, upper_hsv)
     cv.putText(mask,'Lower HSV: [' + str(lh) +',' + str(ls) + ',' + str(lv) + ']', (10,30), font, 0.5, (200,255,155), 1, cv.LINE_AA)
@@ -68,6 +68,6 @@ while(1):
     upper_hsv = np.array([uh,us,uv])
     lower_hsv = np.array([lh,ls,lv])
 
-    time.sleep(0.1)
+    time.sleep(0.2)
 
 cv.destroyAllWindows()
