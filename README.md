@@ -25,3 +25,4 @@ Listes des sites utiles pour le TIPE
 - https://colorpicker.me/#d21313
 - https://piofthings.net/blog/opencv-baby-steps-4-building-a-hsv-calibrator
 - https://github.com/abhisavaliya/hsv_calibration/
+- https://www.devopsschool.com/blog/what-is-opennn-and-how-it-works-an-overview-and-its-use-cases/
