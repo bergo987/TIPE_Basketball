@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 import time
 
-img = cv.imread('/Users/hugo/Documents/Cours/Prepa/TIPE/Basket/TIPE_Baskettball/script/balle_de_calibration.jpg',cv.IMREAD_COLOR)
+img = cv.imread('/Users/hugo/Documents/Cours/Prepa/TIPE/Basket/TIPE_Baskettball/script/GG7.png',cv.IMREAD_COLOR)
 img = cv.medianBlur(img,5)
 
 # Convert BGR to HSV
@@ -69,5 +69,6 @@ while(True):
     lower_hsv = np.array([lh,ls,lv])
 
     time.sleep(0.2)
-
+print("lower hsv : ", lower_hsv)
+print("upper HSV : ", upper_hsv)
 cv.destroyAllWindows()
