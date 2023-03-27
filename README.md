@@ -26,3 +26,17 @@ Listes des sites utiles pour le TIPE
 - https://piofthings.net/blog/opencv-baby-steps-4-building-a-hsv-calibrator
 - https://github.com/abhisavaliya/hsv_calibration/
 - https://www.devopsschool.com/blog/what-is-opennn-and-how-it-works-an-overview-and-its-use-cases/
+
+
+
+# Motivation
+
+## Comptage de point automatisé/informatisé
+
+Le comptage des points est un élément central du basketball, mais parfois à cause du manque de bénévoles des joueurs doivent s’en charger, les pénalisants ainsi.C’est pour cela que j’ai décidé de me pencher sur un comptage de points automatisé, facilement modifiable, grâce à une caméra. 
+
+La conception de ce système s’inscrit directement dans le thème de l’année, de par son importance dans le jeu, et par son utilisation possible lors des entrainement du basketball. 
+
+
+### *Problématique :*  
+La tenue des scores étant essentielle au basketball, il est important de trouver un moyen fiable et peu chère d’assister les bénévoles dans la prise en compte des paniers, et de par la même occasion fournir aux équipes des statistique non apporté par les statistiques de la fédération.
