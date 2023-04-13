@@ -28,7 +28,11 @@ Listes des sites utiles pour le TIPE
 - https://www.devopsschool.com/blog/what-is-opennn-and-how-it-works-an-overview-and-its-use-cases/
 
 
+# À Checker : 
+Nous initialisons ensuite un détecteur de cascade Haar pour détecter les cercles (paniers) à partir du fichier XML "haarcascade_basketball.xml".
 
+Kalman filter : https://www.educba.com/opencv-kalman-filter/
+et le github
 # Motivation
 
 ## Comptage de point automatisé/informatisé
