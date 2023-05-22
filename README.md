@@ -49,3 +49,6 @@ La tenue des scores étant essentielle au basketball, il est important de trouve
 ## Sceance du 15/05
 reprise depuis les vacances, plusieurs tentatives avec un filtre de kalman, 
 "script/IA_assistef/video_balltracker.py" le script fonctionne, il faut maintenant le modifier pour avoir le suivie d'une seule balle
+
+## Scéance du 22/05 
+Début de la mcot, la vidéo tourne à present en boucle
