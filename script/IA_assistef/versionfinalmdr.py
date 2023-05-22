@@ -1,7 +1,7 @@
 import cv2
 
 # Charger la vidéo
-cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/IA_assistef/match.mp4')
+cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/IA_assistef/vid(1).mp4')
 
 # Initialiser le détecteur de cascade Haar pour la détection de cercles (paniers)
 basket_cascade = cv2.CascadeClassifier('haarcascade_basketball.xml')
