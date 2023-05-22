@@ -51,4 +51,7 @@ reprise depuis les vacances, plusieurs tentatives avec un filtre de kalman,
 "script/IA_assistef/video_balltracker.py" le script fonctionne, il faut maintenant le modifier pour avoir le suivie d'une seule balle
 
 ## Scéance du 22/05 
-Début de la mcot, la vidéo tourne à present en boucle
+Début de la mcot, la vidéo tourne à present en boucle (problème de freezze resolue avec une double boucle while)
+liste des problemes inatendus : reflet des balles sur un beau sol
+but : 
+* ligne horizontal pour la detection du panier ( decouper  en 6 zone pour un panier a droite un panier à gauche) 
