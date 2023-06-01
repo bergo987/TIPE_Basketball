@@ -43,15 +43,20 @@ La conception de ce système s’inscrit directement dans le thème de l’anné
 
 
 ### *Problématique :*  
-La tenue des scores étant essentielle au basketball, il est important de trouver un moyen fiable et peu chère d’assister les bénévoles dans la prise en compte des paniers, et de par la même occasion fournir aux équipes des statistique non apporté par les statistiques de la fédération.
+La tenue des scores étant essentielle au basketball, il est important de trouver un moyen fiable et peu chère d’assister les bénévoles dans la prise en compte des paniers, et de par la même occasion fournir aux équipes des statistiques non apporté par les statistiques de la fédération.
 
 
-## Sceance du 15/05
+### Sceance du 15/05
 reprise depuis les vacances, plusieurs tentatives avec un filtre de kalman, 
 "script/IA_assistef/video_balltracker.py" le script fonctionne, il faut maintenant le modifier pour avoir le suivie d'une seule balle
 
-## Scéance du 22/05 
+### Scéance du 22/05 
 Début de la mcot, la vidéo tourne à present en boucle (problème de freezze resolue avec une double boucle while)
 liste des problemes inatendus : reflet des balles sur un beau sol
+mise en place d'une notion de taille pour le track de la balll 
+
+### 1/06
+Changement des scripts, main.py est le fonctionnel, test.py est le brouillon 
 but : 
 * ligne horizontal pour la detection du panier ( decouper  en 6 zone pour un panier a droite un panier à gauche) 
+* Forcer la detection d'une seule balle et affiner les valeurs de scrap

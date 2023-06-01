@@ -1,102 +1,100 @@
-# import the necessary packages
-from collections import deque
-from imutils.video import VideoStream
-import numpy as np
-import argparse
 import cv2
-import imutils
-import time
-# construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-v", "--video",
-	help="path to the (optional) video file")
-ap.add_argument("-b", "--buffer", type=int, default=64,
-	help="max buffer size")
-args = vars(ap.parse_args())
-# define the lower and upper boundaries of the "green"
-# ball in the HSV color space, then initialize the
-# list of tracked points
-ballUpper = (37,190,244)
-ballLower = (0,41,91)
-pts = deque(maxlen=args["buffer"])
-# if a video path was not supplied, grab the reference
-# to the webcam 
-if not args.get("video", False):
-	vs = VideoStream(src=0).start()
-# otherwise, grab a reference to the video file
-else:
-	vs = cv2.VideoCapture(args["video"])
-# allow the camera or video file to warm up
-time.sleep(2.0)
-# keep looping
+import numpy as np
+
+# Set up the video capture
+
+# Define the lower and upper HSV color range of the basketball
+lower_ball = np.array([5, 120, 70])
+upper_ball = np.array([10, 255, 255])
+
+lower_bu = np.array([0, 50, 50])
+upper_bu = np.array([0, 100, 100])
+# Initialize variables for tracking
+prev_ball_count = 0
+ball_count = 0
+
+prev_bu_count = 0 
+bu_count = 0
+
+width = 0 
+height = 0 
+
+mid_w = 0
+mid_h = 0 
+
 while True:
-	# grab the current frame
-	frame = vs.read()
-	# handle the frame from VideoCapture or VideoStream
-	frame = frame[1] if args.get("video", False) else frame
-	# if we are viewing a video and we did not grab a frame,
-	# then we have reached the end of the video
-	if frame is None:
-		break
-	# resize the frame, blur it, and convert it to the HSV
-	# color space
-	frame = imutils.resize(frame, width=600)
-	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-	# construct a mask for the color "green", then perform
-	# a series of dilations and erosions to remove any small
-	# blobs left in the mask
-	mask = cv2.inRange(hsv, ballLower, ballUpper)
-	mask = cv2.erode(mask, None, iterations=2)
-	mask = cv2.dilate(mask, None, iterations=2)
-	# find contours in the mask and initialize the current
-	# (x, y) center of the ball
-	cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-		cv2.CHAIN_APPROX_SIMPLE)
-	cnts = imutils.grab_contours(cnts)
-	center = None
-	# only proceed if at least one contour was found
-	if len(cnts) > 0:
-		# find the largest contour in the mask, then use
-		# it to compute the minimum enclosing circle and
-		# centroid
-		c = max(cnts, key=cv2.contourArea)
-		((x, y), radius) = cv2.minEnclosingCircle(c)
-		M = cv2.moments(c)
-		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-		# only proceed if the radius meets a minimum size
-		if radius > 10:
-			# draw the circle and centroid on the frame,
-			# then update the list of tracked points
-			cv2.circle(frame, (int(x), int(y)), int(radius),
-				(0, 255, 255), 2)
-			cv2.circle(frame, center, 5, (0, 0, 255), -1)
-	# update the points queue
-	pts.appendleft(center)
-		# loop over the set of tracked points
-	for i in range(1, len(pts)):
-		# if either of the tracked points are None, ignore
-		# them
-		if pts[i - 1] is None or pts[i] is None:
-			continue
-		# otherwise, compute the thickness of the line and
-		# draw the connecting lines
-		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
-		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
-	# show the frame to our screen
-	cv2.imshow("Frame", frame)
-	cv2.imshow("mask",mask) # ajout du mask aussi
-	key = cv2.waitKey(1) & 0xFF
-	# if the 'q' key is pressed, stop the loop
-	if key == ord("q"):
-		break
-# if we are not using a video file, stop the camera video stream
-if not args.get("video", False):
-	vs.stop()
-# otherwise, release the camera
-else:
-	vs.release()
-# close all windows
-print("upper :", ballUpper)
-print("lower :", ballLower ) 
+    # Capture frame from the video
+    isclosed = 0
+    cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/IA_assistef/01.mp4')
+    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    mid_w = round(width/2)
+    mid_h = round(height/2)
+    while True:
+
+        ret, frame = cap.read()
+        if not ret:
+            isclosed
+            break
+
+        # Convert frame to HSV color space
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+        # Create a mask to isolate the basketball
+        ball_mask = cv2.inRange(hsv, lower_ball, upper_ball)
+        bu_mask = cv2.inRange(hsv, lower_bu, upper_ball)
+
+        # Apply morphological transformations to the mask
+        kernel = np.ones((5,5), np.uint8)
+        opening_ball = cv2.morphologyEx(ball_mask, cv2.MORPH_OPEN, kernel)
+        closing_ball = cv2.morphologyEx(opening_ball, cv2.MORPH_CLOSE, kernel)
+
+        opening_bu = cv2.morphologyEx(bu_mask, cv2.MORPH_OPEN, kernel)
+        closing_bu = cv2.morphologyEx(opening_bu, cv2.MORPH_CLOSE, kernel)
+        # Find contours of the basketball
+        contours_ball, hierarchy_ball = cv2.findContours(closing_ball, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours_bu , hierarchy_bu = cv2.findContours(closing_bu,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # Draw bounding boxes around the basketball and count them
+        ball_count = 0
+        bu_count = 0 
+        #cv2.line(frame,)
+        for element in contours_ball:
+            area = cv2.contourArea(element)
+            x, y, w, h = cv2.boundingRect(element)
+            dif = abs(w -h) 
+            if area > 900 and dif < 10: #permet de s'assurer que les petites taches ne sont pas prises en compte 
+                x, y, w, h = cv2.boundingRect(element)
+                cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
+                ball_count += 1
+
+
+        for countour in contours_bu : 
+            area_bu = cv2.contourArea(countour)
+            xb,yb,wb,hb = cv2.boundingRect(countour)
+            if area_bu > 1500 and  yb < mid_h:
+                cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
+                bu_count += 1
+
+        # Display the tracking result on the screen
+        cv2.putText(frame, "nb balles: " + str(ball_count), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        cv2.putText(frame, "nb panier: " + str(bu_count), (10,60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),2)
+
+        cv2.putText(frame, "taille: "+str(width)+" x "+str(height), (10, 90), cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
+        
+        cv2.imshow("Ball Count", ball_mask)
+        cv2.imshow("Bu Count", bu_mask)
+        cv2.imshow("Basketball Tracker", frame)
+        # Exit the program if the 'q' key is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            isclosed= 1
+            break
+
+        # Update the previous count
+        prev_ball_count = ball_count
+        prev_bu_count = bu_count
+    if isclosed : 
+        break
+
+# Release the video capture and close all windows
+cap.release()
 cv2.destroyAllWindows()
