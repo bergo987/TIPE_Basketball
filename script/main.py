@@ -1,21 +1,23 @@
+#importation des librairies
 import cv2
 import numpy as np
 
-# Set up the video capture
-
-# Define the lower and upper HSV color range of the basketball
+#Définition des valeurs maximale et minimale prise par le filtre HSV pour la balle 
 lower_ball = np.array([5, 120, 70])
 upper_ball = np.array([10, 255, 255])
 
+#Définition des valeurs maximale et minimale prise par le filtre HSV pour les paniers 
 lower_bu = np.array([0, 50, 50])
 upper_bu = np.array([0, 100, 100])
-# Initialize variables for tracking
+
+# Initialisation des variables permettant de savoir le nombre de balles detecté
 prev_ball_count = 0
 ball_count = 0
 
 prev_bu_count = 0 
 bu_count = 0
 
+#Initialisation des variables servant à compartimenter le flux vidéo
 width = 0 
 height = 0 
 
@@ -25,11 +27,15 @@ mid_h = 0
 while True:
     # Capture frame from the video
     isclosed = 0
+    # Initialisation du flux vidéo, pour pouvoir le réutiliser facilement 
     cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/IA_assistef/01.mp4')
+    #Récuperation de la hauteur, de la largeur et de leurs moitiés 
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-    mid_w = round(width/2)
-    mid_h = round(height/2)
+
+    mid_w = round((width/2))
+    mid_h = round((height/2))
+
     while True:
 
         ret, frame = cap.read()
@@ -37,10 +43,10 @@ while True:
             isclosed
             break
 
-        # Convert frame to HSV color space
+        # Convertion des images de RGB à HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # Create a mask to isolate the basketball
+        # Création du masque pour isolé la balle et les paniers
         ball_mask = cv2.inRange(hsv, lower_ball, upper_ball)
         bu_mask = cv2.inRange(hsv, lower_bu, upper_ball)
 
@@ -57,17 +63,21 @@ while True:
         # Draw bounding boxes around the basketball and count them
         ball_count = 0
         bu_count = 0 
-        #cv2.line(frame,)
+        x = (1,mid_h)
+        y = (width-1,mid_h)
+        cv2.line(img=frame, pt1=(10, mid_w), pt2=(10, 10), color=(255, 0, 0), thickness=5, lineType=8, shift=0)
+
+        #Boucle du traitement du resultat du filtre pour la balle, affichage en vert 
         for element in contours_ball:
             area = cv2.contourArea(element)
             x, y, w, h = cv2.boundingRect(element)
             dif = abs(w -h) 
-            if area > 900 and dif < 10: #permet de s'assurer que les petites taches ne sont pas prises en compte 
+            if area > 900 and dif < 10: #permet de s'assurer que les petites taches ne sont pas prises en compte et que le contour est proche d'un carré
                 x, y, w, h = cv2.boundingRect(element)
                 cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
                 ball_count += 1
 
-
+        #Boucle du traitement du resultat du filtre pour les paniers , affichage en bleur  
         for countour in contours_bu : 
             area_bu = cv2.contourArea(countour)
             xb,yb,wb,hb = cv2.boundingRect(countour)
