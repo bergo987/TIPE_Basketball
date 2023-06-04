@@ -17,12 +17,18 @@ ball_count = 0
 prev_bu_count = 0 
 bu_count = 0
 
+# initialisation du compteur pour les points
+point_count = 0 
+
 #Initialisation des variables servant à compartimenter le flux vidéo
 width = 0 
 height = 0 
 
 mid_w = 0
 mid_h = 0 
+
+bu_pos_1 = np.array([]) # initialisation des tableaux pour la position
+bu_pos_2 = np.array([])
 
 while True:
     # Capture frame from the video
@@ -33,9 +39,11 @@ while True:
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 
-    mid_w = round((width/2))
-    mid_h = round((height/2))
+    mid_w = round((width/3))
+    mid_h = round((height/3))
 
+    print("hauteur : ", height, "largeur : ",width)
+    print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
     while True:
 
         ret, frame = cap.read()
@@ -63,10 +71,12 @@ while True:
         # Draw bounding boxes around the basketball and count them
         ball_count = 0
         bu_count = 0 
-        x = (1,mid_h)
-        y = (width-1,mid_h)
-        cv2.line(img=frame, pt1=(10, mid_w), pt2=(10, 10), color=(255, 0, 0), thickness=5, lineType=8, shift=0)
 
+        c_line = (255,0,0)
+        tick_line = 2
+        cv2.line(img=frame,pt1=(0,mid_h), pt2=(1919,mid_h), color=c_line, thickness= tick_line)
+        cv2.line(img=frame, pt1=(mid_w,0), pt2=(mid_w,mid_h),color=c_line, thickness= tick_line)
+        cv2.line(img=frame, pt1=(2*mid_w,0), pt2=(2*mid_w,mid_h),color=c_line, thickness= tick_line)
         #Boucle du traitement du resultat du filtre pour la balle, affichage en vert 
         for element in contours_ball:
             area = cv2.contourArea(element)
@@ -81,7 +91,10 @@ while True:
         for countour in contours_bu : 
             area_bu = cv2.contourArea(countour)
             xb,yb,wb,hb = cv2.boundingRect(countour)
-            if area_bu > 1500 and  yb < mid_h:
+            if area_bu > 1500 and  yb < mid_h and xb < mid_w :
+                cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
+                bu_count += 1
+            if area_bu > 1500 and  yb < mid_h and 2*mid_w<xb < width :
                 cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
                 bu_count += 1
 
