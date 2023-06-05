@@ -62,3 +62,4 @@ but :
 * compartimentage de la video tentative avec line mais je n'y arrive pas
 * Notion de mouvement pour la balle et pour les paniers (à refléchir)
 * Forcer la detection d'une seule balle et affiner les valeurs de scrap
+
