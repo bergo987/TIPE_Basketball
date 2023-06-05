@@ -62,6 +62,11 @@ la ligne horizontale est en place
 ### 04/06 
 le quadrilage est fonctionnel
 debut de la biblio dans la MCot 
+
+### 05/06 
+fin de la biblo dans la mcot 
+ajout du dossier réference pour garder une trace des sources
+
 to do : 
 * compartimentage de la video tentative avec line mais je n'y arrive pas
 * Notion de mouvement pour la balle et pour les paniers (à refléchir)
