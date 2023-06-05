@@ -58,8 +58,13 @@ mise en place d'une notion de taille pour le track de la balll
 ### 1/06
 Changement des scripts et rangement, main.py est le fonctionnel, test.py est le brouillon 
 la ligne horizontale est en place
-but : 
+
+### 04/06 
+le quadrilage est fonctionnel
+debut de la biblio dans la MCot 
+to do : 
 * compartimentage de la video tentative avec line mais je n'y arrive pas
 * Notion de mouvement pour la balle et pour les paniers (à refléchir)
 * Forcer la detection d'une seule balle et affiner les valeurs de scrap
+
 
