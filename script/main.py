@@ -47,7 +47,8 @@ while True:
     while True:
 
         ret, frame = cap.read()
-        if not ret:
+        rat , vide = cap.read()
+        if not ret or not rat:
             isclosed
             break
 
@@ -107,6 +108,7 @@ while True:
         cv2.imshow("Ball Count", ball_mask)
         cv2.imshow("Bu Count", bu_mask)
         cv2.imshow("Basketball Tracker", frame)
+        cv2.imshow("sans rien",vide)
         # Exit the program if the 'q' key is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             isclosed= 1
