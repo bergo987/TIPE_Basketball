@@ -42,6 +42,20 @@ while True:
     mid_w = round((width/3))
     mid_h = round((height/3))
 
+    kernel = np.ones((5,5), np.uint8)
+
+
+    fst_ret,fst_frame = cap.read()
+
+    fst_hsv = cv2.cvtColor(fst_frame, cv2.COLOR_BGR2HSV)
+
+    bu_mask = cv2.inRange(fst_hsv, lower_bu, upper_ball)
+
+    opening_bu = cv2.morphologyEx(bu_mask, cv2.MORPH_OPEN, kernel)
+    closing_bu = cv2.morphologyEx(opening_bu, cv2.MORPH_CLOSE, kernel)
+
+    contours_bu , hierarchy_bu = cv2.findContours(closing_bu,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
     print("hauteur : ", height, "largeur : ",width)
     print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
     while True:
@@ -57,15 +71,13 @@ while True:
 
         # Création du masque pour isolé la balle et les paniers
         ball_mask = cv2.inRange(hsv, lower_ball, upper_ball)
-        bu_mask = cv2.inRange(hsv, lower_bu, upper_ball)
+
 
         # Apply morphological transformations to the mask
-        kernel = np.ones((5,5), np.uint8)
         opening_ball = cv2.morphologyEx(ball_mask, cv2.MORPH_OPEN, kernel)
         closing_ball = cv2.morphologyEx(opening_ball, cv2.MORPH_CLOSE, kernel)
 
-        opening_bu = cv2.morphologyEx(bu_mask, cv2.MORPH_OPEN, kernel)
-        closing_bu = cv2.morphologyEx(opening_bu, cv2.MORPH_CLOSE, kernel)
+        
         # Find contours of the basketball
         contours_ball, hierarchy_ball = cv2.findContours(closing_ball, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours_bu , hierarchy_bu = cv2.findContours(closing_bu,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -108,7 +120,7 @@ while True:
         cv2.imshow("Ball Count", ball_mask)
         cv2.imshow("Bu Count", bu_mask)
         cv2.imshow("Basketball Tracker", frame)
-        cv2.imshow("sans rien",vide)
+        #cv2.imshow("sans rien",vide)
         # Exit the program if the 'q' key is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             isclosed= 1
