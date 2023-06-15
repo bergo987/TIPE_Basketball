@@ -30,6 +30,8 @@ mid_h = 0
 bu_pos_1 = np.array([]) # initialisation des tableaux pour la position
 bu_pos_2 = np.array([])
 
+
+
 while True:
     # Capture frame from the video
     isclosed = 0
@@ -90,7 +92,25 @@ while True:
         cv2.line(img=frame,pt1=(0,mid_h), pt2=(1919,mid_h), color=c_line, thickness= tick_line)
         cv2.line(img=frame, pt1=(mid_w,0), pt2=(mid_w,mid_h),color=c_line, thickness= tick_line)
         cv2.line(img=frame, pt1=(2*mid_w,0), pt2=(2*mid_w,mid_h),color=c_line, thickness= tick_line)
-        #Boucle du traitement du resultat du filtre pour la balle, affichage en vert 
+        #Boucle du traitement du resultat du filtre pour les paniers , affichage en bleur  
+        for countour in contours_bu : 
+            area_bu = cv2.contourArea(countour)
+            xb,yb,wb,hb = cv2.boundingRect(countour)
+            if area_bu > 1500 and  yb < mid_h and xb < mid_w :
+                cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
+                y_area = yb + 50
+                x_area = xb 
+                y_area_2 = y_area +15
+                x_area_2 = xb + wb
+                cv2.rectangle(frame, (x_area,y_area),(x_area_2,y_area_2),(0,0,255), 2 )
+                bu_count += 1
+            if area_bu > 1500 and  yb < mid_h and 2*mid_w<xb < width :
+                cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
+                bu_count += 1
+        
+        if bu_count > 2 : 
+            print("Ya un probleme qlq part : on détecte 2 paniers")
+        #Boucle du traitement du resultat du filtre pour la balle, affichage en vert         
         for element in contours_ball:
             area = cv2.contourArea(element)
             x, y, w, h = cv2.boundingRect(element)
@@ -99,17 +119,9 @@ while True:
                 x, y, w, h = cv2.boundingRect(element)
                 cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
                 ball_count += 1
-
-        #Boucle du traitement du resultat du filtre pour les paniers , affichage en bleur  
-        for countour in contours_bu : 
-            area_bu = cv2.contourArea(countour)
-            xb,yb,wb,hb = cv2.boundingRect(countour)
-            if area_bu > 1500 and  yb < mid_h and xb < mid_w :
-                cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
-                bu_count += 1
-            if area_bu > 1500 and  yb < mid_h and 2*mid_w<xb < width :
-                cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
-                bu_count += 1
+        
+        if ball_count > 1 :
+            print("on a un problème quelque part, on detecte 2 balles")
 
         # Display the tracking result on the screen
         cv2.putText(frame, "nb balles: " + str(ball_count), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
