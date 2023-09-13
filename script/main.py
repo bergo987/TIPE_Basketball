@@ -1,6 +1,7 @@
 #importation des librairies
 import cv2
 import numpy as np
+from Kalman import KalmanFilter
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour la balle 
 lower_ball = np.array([5, 120, 70])
@@ -38,7 +39,7 @@ def scored(x,y,x2,y2,x3,y3):
     else :
         return False 
 
-
+KF = KalmanFilter(0.1,[0,0])
 
 while True:
     # Capture frame from the video
@@ -46,7 +47,7 @@ while True:
     point_count = 0 
 
     # Initialisation du flux vidéo, pour pouvoir le réutiliser facilement 
-    cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/IA_assistef/01.mp4')
+    cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/01.mp4')
     #Récuperation de la hauteur, de la largeur et de leurs moitiés 
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)

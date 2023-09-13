@@ -34,7 +34,7 @@ while True:
     # Capture frame from the video
     isclosed = 0
     # Initialisation du flux vidéo, pour pouvoir le réutiliser facilement 
-    cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/IA_assistef/01.mp4')
+    cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/01.mp4')
     #Récuperation de la hauteur, de la largeur et de leurs moitiés 
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
