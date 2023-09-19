@@ -1,8 +1,9 @@
 import numpy as np 
 
 class KalmanFilter(object): 
-    def __init__ (self, dt, point):
+    def __init__ (self, dt, point, erreur):
         self.dt = dt
+        self.erreur = int(erreur)
 
         #vecteur 
         self.E=np.matrix([[point[0]],[point[1]], [0],[0]])
@@ -22,8 +23,8 @@ class KalmanFilter(object):
                           [0, 0, 1, 0],
                           [0, 0, 0, 1]])
 
-        self.R=np.matrix([[1, 0],
-                          [0, 1]])
+        self.R=np.matrix([[erreur, 0],
+                          [0, erreur]])
 
         self.P=np.eye(self.A.shape[1])
 
@@ -43,4 +44,4 @@ class KalmanFilter(object):
         I=np.eye(self.H.shape[1])
         self.P=(I-(K*self.H))*self.P
 
-        return self.E     
+        return self.E
