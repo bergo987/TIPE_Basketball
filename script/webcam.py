@@ -14,3 +14,4 @@ if webcam.isOpened():
  
     webcam.release()
     cv2.destroyAllWindows()  
+print("fin")
