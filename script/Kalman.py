@@ -1,6 +1,9 @@
 import numpy as np 
 
 class KalmanFilter(object): 
+    """dt : temps d'actualisation 
+    point : coordonné du point
+    Erreur : plus l'entier est grand, plus le filtre pense que c'est brouillé """
     def __init__ (self, dt, point, erreur):
         self.dt = dt
         self.erreur = int(erreur)
