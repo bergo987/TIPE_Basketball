@@ -4,8 +4,8 @@ import numpy as np
 from Kalman import KalmanFilter
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour la balle 
-lower_ball = np.array([5, 120, 70])
-upper_ball = np.array([10, 255, 255])
+lower_ball = np.array([3, 141, 157])
+upper_ball = np.array([12, 198, 190])
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour les paniers 
 lower_bu = np.array([0, 50, 50])
@@ -39,7 +39,7 @@ def scored(x,y,x2,y2,x3,y3):
     else :
         return False 
 
-KF = KalmanFilter(0.1,[0,0])
+KF = KalmanFilter(0.1,[0,0],1)
 
 while True:
     # Capture frame from the video
@@ -47,7 +47,7 @@ while True:
     point_count = 0 
 
     # Initialisation du flux vidéo, pour pouvoir le réutiliser facilement 
-    cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/01.mp4')
+    cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/match.mp4')
     #Récuperation de la hauteur, de la largeur et de leurs moitiés 
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -56,18 +56,6 @@ while True:
     mid_h = round((height/3))
 
     kernel = np.ones((5,5), np.uint8)
-
-
-    fst_ret,fst_frame = cap.read()
-
-    fst_hsv = cv2.cvtColor(fst_frame, cv2.COLOR_BGR2HSV)
-
-    bu_mask = cv2.inRange(fst_hsv, lower_bu, upper_ball)
-
-    opening_bu = cv2.morphologyEx(bu_mask, cv2.MORPH_OPEN, kernel)
-    closing_bu = cv2.morphologyEx(opening_bu, cv2.MORPH_CLOSE, kernel)
-
-    contours_bu , hierarchy_bu = cv2.findContours(closing_bu,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     print("hauteur : ", height, "largeur : ",width)
     print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
@@ -84,13 +72,18 @@ while True:
 
         # Création du masque pour isolé la balle et les paniers
         ball_mask = cv2.inRange(hsv, lower_ball, upper_ball)
-
+        bu_mask = cv2.inRange(hsv, lower_bu, upper_bu)
         # Apply morphological transformations to the mask
         opening_ball = cv2.morphologyEx(ball_mask, cv2.MORPH_OPEN, kernel)
         closing_ball = cv2.morphologyEx(opening_ball, cv2.MORPH_CLOSE, kernel)
 
         # Find contours of the basketball
         contours_ball, hierarchy_ball = cv2.findContours(closing_ball, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        opening_bu = cv2.morphologyEx(bu_mask, cv2.MORPH_OPEN, kernel)
+        closing_bu = cv2.morphologyEx(opening_bu, cv2.MORPH_CLOSE, kernel)
+
+        contours_bu , hierarchy_bu = cv2.findContours(closing_bu,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours_bu , hierarchy_bu = cv2.findContours(closing_bu,cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         # Draw bounding boxes around the basketball and count them
         ball_count = 0
@@ -124,16 +117,17 @@ while True:
             area = cv2.contourArea(element)
             x, y, w, h = cv2.boundingRect(element)
             dif = abs(w -h) 
-            if area > 900 and dif < 10: #permet de s'assurer que les petites taches ne sont pas prises en compte et que le contour est proche d'un carré
+            if area > 0 : #and dif < 100: #permet de s'assurer que les petites taches ne sont pas prises en compte et que le contour est proche d'un carré
                 x, y, w, h = cv2.boundingRect(element)
                 cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
                 ball_count += 1
-                if scored(x_area,y_area,x_area_2,y_area_2,x,y) and count_temp > 10 : 
+                """if scored(x_area,y_area,x_area_2,y_area_2,x,y) and count_temp > 10 : 
                     point_count += 2
                     count_temp = 0 
         count_temp+=1
-
-        print("nb de points marqué : ", point_count)
+"""
+        #print("nb de points marqué : ", point_count)
+        print("on a ", ball_count)
         if ball_count > 1 :
             print("on a un problème quelque part, on detecte 2 balles")
 
