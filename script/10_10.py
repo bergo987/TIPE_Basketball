@@ -4,8 +4,10 @@ import numpy as np
 from Kalman import KalmanFilter
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour la balle 
-lower_ball = np.array([3, 141, 157])
-upper_ball = np.array([12, 198, 190])
+lower_ball = np.array([4, 120, 63])
+upper_ball = np.array([11, 255, 120])
+
+# (hMin = 4 , sMin = 120, vMin = 63), (hMax = 11 , sMax = 255, vMax = 120)
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour les paniers 
 lower_bu = np.array([0, 50, 50])
@@ -124,7 +126,7 @@ while True:
             area = cv2.contourArea(element)
             x, y, w, h = cv2.boundingRect(element)
             dif = abs(w -h) 
-            if area > 0 : #and dif < 100: #permet de s'assurer que les petites taches ne sont pas prises en compte et que le contour est proche d'un carré
+            if area > 0 and dif < 100: #permet de s'assurer que les petites taches ne sont pas prises en compte et que le contour est proche d'un carré
                 x, y, w, h = cv2.boundingRect(element)
                 cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
                 ball_count += 1
