@@ -4,7 +4,7 @@ import cv2
 lo = np.array([5, 120, 0])
 hi = np.array([10, 255, 255])
 
-def detect_inrange(image, surface):
+def detect_inrange(image, surface, lo, hi):
     points=[]
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     image=cv2.blur(image, (5, 5))
