@@ -4,11 +4,11 @@ import numpy as np
 from Kalman import KalmanFilter
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour la balle 
-lower = np.array([0, 123, 115]) 
-upper = np.array([179, 218, 197])
+lower = np.array([10, 126, 0]) 
+upper = np.array([17, 255, 245])
 
-bu_lower = np.array([0, 129, 104]) 
-bu_upper = np.array([179, 193, 255])
+bu_lower = np.array([3, 117, 68]) 
+bu_upper = np.array([10, 255, 169])
 
 width = 0 
 height = 0 
@@ -23,7 +23,7 @@ def scored(x,y,x2,y2,x3,y3):
     else :
         return False 
 
-KF = KalmanFilter(0.1,[0,0],1)
+KF = KalmanFilter(0.1,[0,0],0.5)
 
 def detect_inrange(image, surface,lo,hi):
     points=[]
@@ -65,20 +65,20 @@ def detect_bu(image,min_surface,lo,hi,h,w, ):
             cv2.rectangle(frame, (x_area,y_area),(x_area_2,y_area_2),(0,0,255), 2 )
             bu_count += 1
         if area_bu > 1500 and  yb < mid_h and 2*mid_w<xb < width :
-            cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,0,0),2)
+            cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,255,255),2)
             bu_count += 1
-    return bu_count
+    return bu_count, bu_mask
 
 cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/IMG_3542.MOV')
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 
-mid_w = round((width/3))
+mid_w = round((width/8))
 mid_h = round((height/3))
 
 print("hauteur : ", height, "largeur : ",width)
 print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
-surface = 200
+surface = 2000
 while True:
     # Capture frame from the video
     isclosed = 0
@@ -93,8 +93,11 @@ while True:
         break
     points, mask = detect_inrange(frame,surface,lower,upper)
     etat= KF.predict().astype(np.int32)
+    
+    # le tableau etat contient les previsions, le tableau point contient la position que le filtre estime 
 
-    cv2.circle(frame,(int(etat[0]),int(etat[1])),2,(255,0,0),5)
+    cv2.circle(frame,(int(etat[0]),int(etat[1])),5,(255,0,0),5)
+
     cv2.arrowedLine(frame,
                 (int(etat[0]), int(etat[1])), (int(etat[0]+etat[2]), int(etat[1]+etat[3])),
                 color=(0, 255, 0),
@@ -102,20 +105,32 @@ while True:
                 tipLength=0.2)
     
     if (len(points)>0):
-        cv2.circle(frame, (points[0][0], points[0][1]), 10, (0, 0, 255), 2)
+        cv2.circle(frame, (points[0][0], points[0][1]), 15, (0, 0, 255), 2)
+        x,y  = points[0][0],points[0][1]
+        X,Y = int(etat[0]),int(etat[1])
+        print("les coordonnées sont : ", x,y)
+        print("les coordonnées sont : ", X,Y)
+        delta_x= abs(X-x)
+        delta_y = abs(Y-y)
+
+        print("les ecarts sont : ", delta_x," et ",delta_y)
         KF.update(np.expand_dims(points[0], axis=-1))
     
     if mask is not None:
         cv2.imshow('ball',mask)
     
-    bu_count += detect_bu(mask,1500,bu_lower,bu_upper,height,width)
+    bu_count, bu_mask = detect_bu(mask,1500,bu_lower,bu_upper,height,width)
     
+    if bu_mask is not None : 
+        cv2.imshow('bu',bu_mask)
+
+
     # Display the tracking result on the screen
     c_line = (255,0,0)
     tick_line = 2
-    cv2.line(img=frame,pt1=(0,mid_h), pt2=(1919,mid_h), color=c_line, thickness= tick_line)
-    cv2.line(img=frame, pt1=(mid_w,0), pt2=(mid_w,mid_h),color=c_line, thickness= tick_line)
-    cv2.line(img=frame, pt1=(2*mid_w,0), pt2=(2*mid_w,mid_h),color=c_line, thickness= tick_line)    
+    cv2.line(img=frame,pt1=(0,mid_h), pt2=(int(width-1),mid_h), color=c_line, thickness= tick_line)
+    cv2.line(img=frame, pt1=(3*mid_w,0), pt2=(3*mid_w,mid_h),color=c_line, thickness= tick_line)
+    cv2.line(img=frame, pt1=(5*mid_w,0), pt2=(5*mid_w,mid_h),color=c_line, thickness= tick_line)    
     cv2.putText(frame, "nb panier: "+str(bu_count), (10, 30), cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
 
     cv2.putText(frame, "taille: "+str(width)+" x "+str(height), (10, 60), cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
