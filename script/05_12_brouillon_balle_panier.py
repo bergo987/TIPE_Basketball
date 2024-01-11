@@ -69,7 +69,7 @@ def detect_bu(image,min_surface,lo,hi,h,w, ):
             bu_count += 1
     return bu_count, bu_mask
 
-cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/IMG_3542.MOV')
+cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/match_interieur.MOV')
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 
