@@ -4,8 +4,8 @@ import numpy as np
 from Kalman import KalmanFilter
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour la balle 
-lower = np.array([10, 126, 0]) 
-upper = np.array([17, 255, 245])
+lower = np.array([9, 95, 68]) 
+upper = np.array([16, 255, 152])
 
 bu_lower = np.array([3, 117, 68]) 
 bu_upper = np.array([10, 255, 169])
@@ -25,7 +25,7 @@ def scored(x,y,x2,y2,x3,y3):
 
 KF = KalmanFilter(0.1,[0,0],0.5)
 
-def detect_inrange(image, surface,lo,hi):
+def detect_inrange(image, min_surface,max_surface,lo,hi):
     points=[]
     image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     image=cv2.blur(image, (10, 10))
@@ -35,7 +35,7 @@ def detect_inrange(image, surface,lo,hi):
     elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     elements=sorted(elements, key=lambda x:cv2.contourArea(x), reverse=True)
     for element in elements:
-        if cv2.contourArea(element)>surface:
+        if cv2.contourArea(element)>min_surface and cv2.contourArea(element)<max_surface:
             ((x, y), rayon)=cv2.minEnclosingCircle(element)
             points.append(np.array([int(x), int(y)]))
         else:
@@ -69,7 +69,7 @@ def detect_bu(image,min_surface,lo,hi,h,w, ):
             bu_count += 1
     return bu_count, bu_mask
 
-cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/match_interieur.MOV')
+cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/IMG_3542.MOV')
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 
@@ -78,7 +78,6 @@ mid_h = round((height/3))
 
 print("hauteur : ", height, "largeur : ",width)
 print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
-surface = 2000
 while True:
     # Capture frame from the video
     isclosed = 0
@@ -91,7 +90,7 @@ while True:
     if not ret :
         isclosed
         break
-    points, mask = detect_inrange(frame,surface,lower,upper)
+    points, mask = detect_inrange(frame,0,10000,lower,upper)
     etat= KF.predict().astype(np.int32)
     
     # le tableau etat contient les previsions, le tableau point contient la position que le filtre estime 
@@ -119,10 +118,10 @@ while True:
     if mask is not None:
         cv2.imshow('ball',mask)
     
-    bu_count, bu_mask = detect_bu(mask,1500,bu_lower,bu_upper,height,width)
+    bu_count, bu_mask = detect_bu(mask,500,bu_lower,bu_upper,height,width)
     
-    if bu_mask is not None : 
-        cv2.imshow('bu',bu_mask)
+    #if bu_mask is not None : 
+        #cv2.imshow('bu',bu_mask)
 
 
     # Display the tracking result on the screen
