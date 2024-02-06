@@ -4,8 +4,8 @@ import numpy as np
 from Kalman import KalmanFilter
 
 #Définition des valeurs maximale et minimale prise par le filtre HSV pour la balle 
-lower = np.array([0, 105, 159]) 
-upper = np.array([179, 142, 201])
+lower = np.array([3, 125, 43]) 
+upper = np.array([14, 255, 156])
 
 bu_lower = np.array([3, 117, 68]) 
 bu_upper = np.array([10, 255, 169])
@@ -69,7 +69,7 @@ def detect_bu(image,min_surface,lo,hi,h,w, ):
             bu_count += 1
     return bu_count, bu_mask
 
-cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/interieur.MOV')
+cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/lancer_franc1_(1).MOV')
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 
@@ -90,7 +90,7 @@ while True:
     if not ret :
         isclosed
         break
-    points, mask = detect_inrange(frame,0,10000,lower,upper)
+    points, mask = detect_inrange(frame,0,1700,lower,upper)
     etat= KF.predict().astype(np.int32)
     
     # le tableau etat contient les previsions, le tableau point contient la position que le filtre estime 
