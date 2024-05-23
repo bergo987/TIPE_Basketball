@@ -4,10 +4,11 @@ Motivation_27_03.pages
 script/Ball_Tracking/demo_copy.mp4
 script/Ball_Tracking/vid2Kalman.avi
 script/cvzone
-script/__pycache__
 MCOT.pages
 diapo/DS_Store
 archive/
 script/video_perso/
 diapo/
 script/test.py
+.vscode/
+script/__pycache__/Kalman.cpython-311.pyc

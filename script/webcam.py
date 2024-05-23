@@ -1,6 +1,6 @@
 import cv2
 
-webcam = cv2.VideoCapture(0)
+webcam = cv2.VideoCapture(1)
 if webcam.isOpened():
     while True:
         bImgReady, imageframe = webcam.read() # get frame per frame from the webcam

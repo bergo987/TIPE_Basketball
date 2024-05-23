@@ -16,8 +16,6 @@ height = 0
 mid_w = 0
 mid_h = 0 
 
-
-
 cap = cv2.VideoCapture('/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/lancer_franc1_(1).MOV')
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -40,7 +38,7 @@ while True:
 
     ret, frame = cap.read()
     if not ret :
-        isclosed
+        isclosed = 1
         break
     points, mask = A.detect_ball(frame,0,1700,lower,upper)
     etat= KF.predict().astype(np.int32)
