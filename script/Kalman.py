@@ -49,6 +49,7 @@ class KalmanFilter(object):
         self.P=(I-(K*self.H))*self.P
 
         return self.E
+
 class Annexe(object):
     def __init__(self,w,h,mw,mh):
         self.width = w
@@ -66,6 +67,7 @@ class Annexe(object):
     def detect_ball(self, image, min_surface,max_surface,lo,hi):
         """Renvoie un tableau trié par surface décroissante"""
         points=np.empty(2,int)
+        img = image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         image=cv2.blur(image, (10, 10))
         mask=cv2.inRange(image, lo, hi)
@@ -73,13 +75,19 @@ class Annexe(object):
         mask=cv2.dilate(mask, None, iterations=4)
         elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         elements=sorted(elements, key=lambda x:cv2.contourArea(x), reverse=True)
+        i = 0 
         for element in elements:
             if cv2.contourArea(element)>min_surface and cv2.contourArea(element)<max_surface:
-                ((x, y), _)=cv2.minEnclosingCircle(element)
-                points =np.append(points,np.array([int(x), int(y)]))
+                ((x, y), r)=cv2.minEnclosingCircle(element)
+                x,y,r = round(x,None),round(y,None),round(r,None)
+                img = cv2.circle(img,(x,y),r,(0, 0, 255))
+                points =np.append(points,np.array([(x,y)]))
+                i+=1
+                print("i vaut", i )
+                print ("le rayon vaut : ",r)
             else:
                 break
-        return points,mask 
+        return points,mask,img
     
 
     def detect_bu(self, frame,min_surface,lo,hi): 
