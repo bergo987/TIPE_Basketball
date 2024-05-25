@@ -40,7 +40,7 @@ while True :
     if not ret :
         isclosed = 1 
         break
-    points, b_mask = A.detect_ball(frame,0,1700,lower,upper)
+    points, b_mask, img = A.detect_ball(frame,0,1700,lower,upper)
     print("premier élément du tableau point : ",points[0])
     print("nombre de points détecté : ", points.shape[0])
     if b_mask is not None:
