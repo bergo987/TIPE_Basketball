@@ -48,8 +48,8 @@ while True :
 
     bu_count, bu_mask = A.detect_bu(frame, 500,bu_lower,bu_upper)
 
-    if bu_mask is not None : 
-        cv2.imshow('bu',bu_mask)
+#   if bu_mask is not None : 
+#       cv2.imshow('bu',bu_mask)
 
     c_line = (255,0,0)
     tick_line = 2
@@ -65,9 +65,10 @@ while True :
     # On quitte le programme si l'on presse Q lorsque l'on est sur la bonne fenêtre
     if cv2.waitKey(1) & 0xFF == ord('q'):
         isclosed= 1
+        print("on quitte manuellement")
         break
 
-#On ferme le fluw correctement
+#On ferme le flux correctement
 cap.release()
 cv2.destroyAllWindows()
 

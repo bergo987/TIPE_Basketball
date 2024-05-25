@@ -130,8 +130,8 @@ class Annexe(object):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         image=cv2.blur(hsv, (10, 10))
         bu_mask=cv2.inRange(image, lo, hi)
-        bu_mask=cv2.erode(bu_mask, None, iterations=4)
-        bu_mask=cv2.dilate(bu_mask, None, iterations=4)
+        bu_mask=cv2.erode(bu_mask, None, iterations=5)
+        bu_mask=cv2.dilate(bu_mask, None, iterations=5)
         contours_bu=cv2.findContours(bu_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         contours_bu=sorted(contours_bu, key=lambda x:cv2.contourArea(x), reverse=True)
         bu_count = 0 
