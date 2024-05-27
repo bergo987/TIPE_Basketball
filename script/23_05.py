@@ -3,14 +3,15 @@ import cv2
 import numpy as np 
 from Kalman import KalmanFilter,Annexe
 
-#declaration des variables 
+#déclaration des variables 
 lower = np.array([3, 125, 43]) 
 upper = np.array([14, 255, 156])
 
 bu_lower =np.array([3, 125, 43]) 
 bu_upper = np.array([14, 255, 156])
+prev_pos = (-1,-1)
 
-width = 0 
+width  = 0 
 height = 0 
 
 mid_w = 0
@@ -31,6 +32,8 @@ A = Annexe(width,height,mid_w,mid_h)
 print("hauteur : ", height, "largeur : ",width)
 print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
 
+
+
 while True : 
     isclosed = 0 
     point_count = 0 
@@ -41,15 +44,16 @@ while True :
         isclosed = 1 
         break
     points, b_mask, img = A.detect_ball(frame,0,1700,lower,upper)
-    print("premier élément du tableau point : ",points[0])
-    print("nombre de points détecté : ", points.shape[0])
-    if b_mask is not None:
-        cv2.imshow('ball',b_mask)
+    print("premier élément du tableau point = nb balle : ",points[0])
+    print("nombre de balle détecté : ", points.shape[0])
+    #if b_mask is not None:
+    #    cv2.imshow('ball',b_mask)
 
-    bu_count, bu_mask = A.detect_bu(frame, 500,bu_lower,bu_upper)
+    bu_count, bu_mask, pos= A.detect_bu(frame, 500,bu_lower,bu_upper,prev_pos)
+    prev_pos = pos
 
-#   if bu_mask is not None : 
-#       cv2.imshow('bu',bu_mask)
+    if bu_mask is not None : 
+        cv2.imshow('bu',bu_mask)
 
     c_line = (255,0,0)
     tick_line = 2

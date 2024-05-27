@@ -1,5 +1,6 @@
 import numpy as np 
 import cv2
+from math import * 
 
 class KalmanFilter(object): 
     """dt : temps d'actualisation 
@@ -92,6 +93,14 @@ class Annexe(object):
         self.mid_w = mw
         self.mid_h = mh       
 
+    def delta(self, x, y ):
+        u,v = x
+        w, z = y
+        if u ==-1 and v ==-1 :
+            return (0)
+        else : 
+            return (sqrt((u-w)**2 + (v-z)**2))
+    
     def scored(self, x,y,x2,y2,x3,y3): 
         if x <x3 and x3 <x2 and y< y2 and y2< y3 :
             return True
@@ -115,7 +124,7 @@ class Annexe(object):
             if cv2.contourArea(element)>min_surface and cv2.contourArea(element)<max_surface:
                 ((x, y), r)=cv2.minEnclosingCircle(element)
                 x,y,r = round(x,None),round(y,None),round(r,None)
-                img = cv2.circle(img,(x,y),r,(0, 0, 255))
+                img = cv2.circle(img,(x,y),r,(0, 0, 255),2)
                 points =np.append(points,np.array([(x,y)]))
                 i+=1
                 print("i vaut", i )
@@ -123,9 +132,8 @@ class Annexe(object):
             else:
                 break
         return points,mask,img
-    
 
-    def detect_bu(self, frame,min_surface,lo,hi): 
+    def detect_bu(self, frame,min_surface,lo,hi, prev): 
         """Renvoie un tableau trié par surface décroissante"""
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         image=cv2.blur(hsv, (10, 10))
@@ -135,10 +143,15 @@ class Annexe(object):
         contours_bu=cv2.findContours(bu_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         contours_bu=sorted(contours_bu, key=lambda x:cv2.contourArea(x), reverse=True)
         bu_count = 0 
-        for countour in contours_bu : 
-            area_bu = cv2.contourArea(countour)
-            xb,yb,wb,hb = cv2.boundingRect(countour)
-            if area_bu > min_surface and  yb < self.height and 2*self.mid_w<xb < self.width :
-                cv2.rectangle(image, (xb,yb),(xb+wb,yb+hb), (255,255,255),2)
-                bu_count += 1
-        return bu_count, bu_mask
+        for i in range(0,len(contours_bu)) : 
+            area_bu = cv2.contourArea(contours_bu[i])
+            xb,yb,wb,hb = cv2.boundingRect(contours_bu[i])
+            center = (round(xb+(wb/2)),round((yb+hb)/2))
+            if area_bu > min_surface and  yb < self.mid_h and 5*self.mid_w<xb < self.width :
+                print(i)
+                if self.delta(center,prev) < 50: 
+                    cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,255,255),2)
+                    print("on a mis à jours center")
+                    bu_count += 1
+                    break
+        return bu_count, bu_mask, center
