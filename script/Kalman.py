@@ -149,7 +149,7 @@ class Annexe(object):
             center = (round(xb+(wb/2)),round((yb+hb)/2))
             if area_bu > min_surface and  yb < self.mid_h and 5*self.mid_w<xb < self.width :
                 print(i)
-                if self.delta(center,prev) < 50: 
+                if self.delta(center,prev) < 30: 
                     cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,255,255),2)
                     print("on a mis à jours center")
                     bu_count += 1
