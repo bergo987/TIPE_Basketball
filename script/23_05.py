@@ -9,7 +9,7 @@ upper = np.array([14, 255, 156])
 
 bu_lower =np.array([3, 125, 43]) 
 bu_upper = np.array([14, 255, 156])
-prev_pos = (-1,-1)
+prev_pos_bu = (-1,-1)
 
 width  = 0 
 height = 0 
@@ -43,17 +43,18 @@ while True :
     if not ret :
         isclosed = 1 
         break
-    points, b_mask, img = A.detect_ball(frame,0,1700,lower,upper)
+    #on commence par détecter les paniers
+    bu_count, bu_mask, pos= A.detect_bu(frame, 500,bu_lower,bu_upper,prev_pos_bu)
+    prev_pos_bu = pos
+
+    points, b_mask, img = A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu)
     print("premier élément du tableau point = nb balle : ",points[0])
     print("nombre de balle détecté : ", points.shape[0])
     #if b_mask is not None:
     #    cv2.imshow('ball',b_mask)
 
-    bu_count, bu_mask, pos= A.detect_bu(frame, 500,bu_lower,bu_upper,prev_pos)
-    prev_pos = pos
-
-    if bu_mask is not None : 
-        cv2.imshow('bu',bu_mask)
+    #if bu_mask is not None : 
+    #    cv2.imshow('bu',bu_mask)
 
     c_line = (255,0,0)
     tick_line = 2

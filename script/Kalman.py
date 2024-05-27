@@ -101,38 +101,15 @@ class Annexe(object):
         else : 
             return (sqrt((u-w)**2 + (v-z)**2))
     
+    def center(self,x,y,w,h):
+        return round(x+(w/2)),round(y+(h/2))
+
     def scored(self, x,y,x2,y2,x3,y3): 
         if x <x3 and x3 <x2 and y< y2 and y2< y3 :
             return True
         else :
             return False 
         
-
-    def detect_ball(self, image, min_surface,max_surface,lo,hi):
-        """Renvoie un tableau trié par surface décroissante"""
-        points=np.empty(2,int)
-        img = image
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        image=cv2.blur(image, (10, 10))
-        mask=cv2.inRange(image, lo, hi)
-        mask=cv2.erode(mask, None, iterations=6)
-        mask=cv2.dilate(mask, None, iterations=6)
-        elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-        elements=sorted(elements, key=lambda x:cv2.contourArea(x), reverse=True)
-        i = 0 
-        for element in elements:
-            if cv2.contourArea(element)>min_surface and cv2.contourArea(element)<max_surface:
-                ((x, y), r)=cv2.minEnclosingCircle(element)
-                x,y,r = round(x,None),round(y,None),round(r,None)
-                img = cv2.circle(img,(x,y),r,(0, 0, 255),2)
-                points =np.append(points,np.array([(x,y)]))
-                i+=1
-                print("i vaut", i )
-                print ("le rayon vaut : ",r)
-            else:
-                break
-        return points,mask,img
-
     def detect_bu(self, frame,min_surface,lo,hi, prev): 
         """Renvoie un tableau trié par surface décroissante"""
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -146,12 +123,41 @@ class Annexe(object):
         for i in range(0,len(contours_bu)) : 
             area_bu = cv2.contourArea(contours_bu[i])
             xb,yb,wb,hb = cv2.boundingRect(contours_bu[i])
-            center = (round(xb+(wb/2)),round((yb+hb)/2))
+            center_bu = self.center(xb,yb,wb,hb)
             if area_bu > min_surface and  yb < self.mid_h and 5*self.mid_w<xb < self.width :
                 print(i)
-                if self.delta(center,prev) < 30: 
+                if self.delta(center_bu,prev) < 30: 
                     cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,255,255),2)
                     print("on a mis à jours center")
                     bu_count += 1
                     break
-        return bu_count, bu_mask, center
+        return bu_count, bu_mask, center_bu
+
+    def detect_ball(self, image, min_surface,max_surface,lo,hi,pos_bu):
+        """Renvoie un tableau trié par surface décroissante"""
+        points=np.empty(2,int)
+        img = image
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        image=cv2.blur(image, (10, 10))
+        mask=cv2.inRange(image, lo, hi)
+        mask=cv2.erode(mask, None, iterations=6)
+        mask=cv2.dilate(mask, None, iterations=6)
+        elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+        elements=sorted(elements, key=lambda x:cv2.contourArea(x), reverse=True)
+        i = 0 
+        for i in range(0, len(elements)):
+            if cv2.contourArea(elements[i])>min_surface and cv2.contourArea(elements[i])<max_surface:
+                ((x, y), r)=cv2.minEnclosingCircle(elements[i])
+                x,y,r = round(x,None),round(y,None),round(r,None)
+                c = x,y
+                if self.delta(c,pos_bu)>30 : 
+                    x,y,r = round(x,None),round(y,None),round(r,None)
+                    img = cv2.circle(img,(x,y),r,(0, 0, 255),2)
+                    points =np.append(points,np.array([(x,y)]))
+                    i+=1
+                    print("i vaut", i )
+                    print ("le rayon vaut : ",r)
+                    break
+            else:
+                break
+        return points,mask,img
