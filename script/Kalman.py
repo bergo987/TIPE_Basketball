@@ -51,43 +51,12 @@ class KalmanFilter(object):
 
         return self.E
 
-class Forme():
-    def __init__(self):
-        pass
-    def detect(self, c):
-        # initialize the shape name and approximate the contour
-        shape = -1
-        peri = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.04 * peri, True)
-        print("on a :",len(approx),"contours")
-        # if the shape is a triangle, it will have 3 vertices
-        if len(approx) == 3:
-            shape = 0
-        # if the shape has 4 vertices, it is either a square or
-        # a rectangle
-        elif len(approx) == 4:
-            # compute the bounding box of the contour and use the
-            # bounding box to compute the aspect ratio
-            (x, y, w, h) = cv2.boundingRect(approx)
-            ar = w / float(h)
-            # a square will have an aspect ratio that is approximately
-            # equal to one, otherwise, the shape is a rectangle
-            shape = 0 if ar >= 0.95 and ar <= 1.05 else 0
-        # if the shape is a pentagon, it will have 5 vertices
-        elif len(approx) == 5:
-            shape = 0
-        elif len(approx) == 6:
-            shape = 0
-        elif len(approx) == 10 or len(approx) == 12:
-            shape = 0
-        # otherwise, we assume the shape is a circle
-        else:
-            shape = 1
-        # return the name of the shape
-        return shape   
-
 class Annexe(object):
-    def __init__(self,w,h,mw,mh):
+    """w: Largeur de l'image
+        h : hauteur de l'image
+        mw : 1/3 de la largeur
+        mh : 1/8 de l'image """
+    def __init__(self,w,h ,mw : int,mh : int):
         self.width = w
         self.height = h
         self.mid_w = mw
