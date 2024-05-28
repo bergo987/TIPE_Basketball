@@ -29,32 +29,37 @@ mid_h = round((height/3))
 KF = KalmanFilter(0.1,[0,0],0.5)
 A = Annexe(width,height,mid_w,mid_h)
 
+score = 0
+nb_frame = 0 #sert a compter le nombre de frame entre deux paniers marqués 
+
 print("hauteur : ", height, "largeur : ",width)
 print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
 
 
 
 while True : 
-    isclosed = 0 
-    point_count = 0 
+    isclosed = 0  
     bu_count = 0 
+    nb_frame +=1
 
     ret, frame = cap.read()
     if not ret :
         isclosed = 1 
         break
     #on commence par détecter les paniers
-    bu_count, bu_mask, pos= A.detect_bu(frame, 500,bu_lower,bu_upper,prev_pos_bu)
-    prev_pos_bu = pos
-
-    points, b_mask, img = A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu)
-    print("premier élément du tableau point = nb balle : ",points[0])
-    print("nombre de balle détecté : ", points.shape[0])
+    bu_count, bu_mask, pos_bu= A.detect_bu(frame, 500,bu_lower,bu_upper,prev_pos_bu)
+    prev_pos_bu = pos_bu
+    b_mask, img , pos_ba= A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu)
     #if b_mask is not None:
     #    cv2.imshow('ball',b_mask)
 
     #if bu_mask is not None : 
     #    cv2.imshow('bu',bu_mask)
+
+    if A.scored(pos_ba,pos_bu):
+        if nb_frame > 10: 
+            score +=2 
+            nb_frame = 0 
 
     c_line = (255,0,0)
     tick_line = 2
@@ -64,7 +69,7 @@ while True :
     cv2.putText(frame, "nb panier: "+str(bu_count), (10, 30), cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
 
     cv2.putText(frame, "taille: "+str(width)+" x "+str(height), (10, 60), cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
-    cv2.putText(frame, "kalman detecte : "+str(len(points))+" balles", (10, 90), cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
+    cv2.putText(frame, "score: "+str(score), (10, 90), cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),2)
 
     cv2.imshow("Basketball Tracker", frame)
     # On quitte le programme si l'on presse Q lorsque l'on est sur la bonne fenêtre

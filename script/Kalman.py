@@ -104,12 +104,9 @@ class Annexe(object):
     def center(self,x,y,w,h):
         return round(x+(w/2)),round(y+(h/2))
 
-    def scored(self, x,y,x2,y2,x3,y3): 
-        if x <x3 and x3 <x2 and y< y2 and y2< y3 :
-            return True
-        else :
-            return False 
-        
+    def scored(self,c_ba, c_bu): 
+        return self.delta(c_bu,c_ba) < 10
+    
     def detect_bu(self, frame,min_surface,lo,hi, prev): 
         """Renvoie un tableau trié par surface décroissante"""
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -135,7 +132,6 @@ class Annexe(object):
 
     def detect_ball(self, image, min_surface,max_surface,lo,hi,pos_bu):
         """Renvoie un tableau trié par surface décroissante"""
-        points=np.empty(2,int)
         img = image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         image=cv2.blur(image, (10, 10))
@@ -145,6 +141,7 @@ class Annexe(object):
         elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         elements=sorted(elements, key=lambda x:cv2.contourArea(x), reverse=True)
         i = 0 
+        c = (-1,-1)
         for i in range(0, len(elements)):
             if cv2.contourArea(elements[i])>min_surface and cv2.contourArea(elements[i])<max_surface:
                 ((x, y), r)=cv2.minEnclosingCircle(elements[i])
@@ -153,11 +150,10 @@ class Annexe(object):
                 if self.delta(c,pos_bu)>30 : 
                     x,y,r = round(x,None),round(y,None),round(r,None)
                     img = cv2.circle(img,(x,y),r,(0, 0, 255),2)
-                    points =np.append(points,np.array([(x,y)]))
                     i+=1
                     print("i vaut", i )
                     print ("le rayon vaut : ",r)
                     break
             else:
                 break
-        return points,mask,img
+        return mask,img,c
