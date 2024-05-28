@@ -16,7 +16,7 @@ height = 0
 
 mid_w = 0
 mid_h = 0 
-links = '/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/lancer_franc1_(1).MOV'
+links = '/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Basketball/script/video_perso/lancer_franc1_(1).MOV'
 
 #initialisation du flux vidéo
 cap = cv2.VideoCapture(links)
@@ -26,7 +26,7 @@ width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 mid_w = round((width/8))
 mid_h = round((height/3))
 
-KF = KalmanFilter(0.1,[0,0],0.5)
+KF = KalmanFilter(0.1,[0,0],1)
 A = Annexe(width,height,mid_w,mid_h)
 
 score = 0
@@ -50,11 +50,15 @@ while True :
     bu_count, bu_mask, pos_bu= A.detect_bu(frame, 500,bu_lower,bu_upper,prev_pos_bu)
     prev_pos_bu = pos_bu
     b_mask, img , pos_ba= A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu)
-    #if b_mask is not None:
-    #    cv2.imshow('ball',b_mask)
+    
+    etat=KF.predict().astype(np.int32)
+    x,y = round(etat.item(0)),round(etat.item(1))
 
-    #if bu_mask is not None : 
-    #    cv2.imshow('bu',bu_mask)
+    cv2.circle(frame,(x,y),10,(255, 255, 255),2)
+
+    cv2.circle(frame, pos_ba, 10, (0, 0, 255), 2)
+    KF.update(np.expand_dims(pos_ba, axis=-1))
+
 
     if A.scored(pos_ba,pos_bu):
         if nb_frame > 10: 
@@ -72,6 +76,13 @@ while True :
     cv2.putText(frame, "score: "+str(score), (10, 90), cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),2)
 
     cv2.imshow("Basketball Tracker", frame)
+
+       #if b_mask is not None:
+    #    cv2.imshow('ball',b_mask)
+
+    #if bu_mask is not None : 
+    #    cv2.imshow('bu',bu_mask)
+
     # On quitte le programme si l'on presse Q lorsque l'on est sur la bonne fenêtre
     if cv2.waitKey(1) & 0xFF == ord('q'):
         isclosed= 1

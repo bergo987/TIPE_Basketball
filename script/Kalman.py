@@ -6,7 +6,7 @@ class KalmanFilter(object):
     """dt : temps d'actualisation 
     point : coordonné initiaux du point
     erreur : plus l'entier est grand, plus le filtre pense que c'est brouillé """
-    def __init__ (self, dt, point, erreur):
+    def __init__ (self, dt, point, erreur : float ):
         self.dt = dt
         self.erreur = int(erreur)
 
@@ -48,7 +48,6 @@ class KalmanFilter(object):
         self.E=np.round(self.E+np.dot(K, (z-np.dot(self.H, self.E))))
         I=np.eye(self.H.shape[1])
         self.P=(I-(K*self.H))*self.P
-
         return self.E
 
 class Annexe(object):
@@ -116,7 +115,7 @@ class Annexe(object):
                 ((x, y), r)=cv2.minEnclosingCircle(elements[i])
                 x,y,r = round(x,None),round(y,None),round(r,None)
                 c = x,y
-                if self.delta(c,pos_bu)>30 : 
+                if self.delta(c,pos_bu)>40 : 
                     x,y,r = round(x,None),round(y,None),round(r,None)
                     img = cv2.circle(img,(x,y),r,(0, 0, 255),2)
                     i+=1
