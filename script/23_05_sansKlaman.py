@@ -16,7 +16,7 @@ height = 0
 
 mid_w = 0
 mid_h = 0 
-links = '/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Baskettball/script/video_perso/lancer_franc1_(1).MOV'
+links = '/Users/hugo/Documents/Cours/Prepa/TIPE/TIPE_Basketball/script/video_perso/lancer_franc1_(1).MOV'
 
 #initialisation du flux vidéo
 cap = cv2.VideoCapture(links)
