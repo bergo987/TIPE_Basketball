@@ -3,7 +3,7 @@ import cv2
 from math import * 
 
 class KalmanFilter(object): 
-    """dt : temps d'actualisation 
+    """dt : temps d'actualisation
     point : coordonné initiaux du point
     erreur : plus l'entier est grand, plus le filtre pense que c'est brouillé """
     def __init__ (self, dt, point, erreur : float ):
@@ -75,16 +75,17 @@ class Annexe(object):
     def scored(self,c_ba, c_bu): 
         return self.delta(c_bu,c_ba) < 10
     
-    def detect_bu(self, frame,min_surface,lo,hi, prev): 
+    def detect_bu(self, frame,min_surface,lo,hi, prev,iter : int): 
         """Renvoie un tableau trié par surface décroissante"""
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         image=cv2.blur(hsv, (10, 10))
         bu_mask=cv2.inRange(image, lo, hi)
-        bu_mask=cv2.erode(bu_mask, None, iterations=5)
-        bu_mask=cv2.dilate(bu_mask, None, iterations=5)
+        bu_mask=cv2.erode(bu_mask, None, iterations=iter)
+        bu_mask=cv2.dilate(bu_mask, None, iterations=iter)
         contours_bu=cv2.findContours(bu_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         contours_bu=sorted(contours_bu, key=lambda x:cv2.contourArea(x), reverse=True)
         bu_count = 0 
+        center_bu = (-2,-2)
         for i in range(0,len(contours_bu)) : 
             area_bu = cv2.contourArea(contours_bu[i])
             xb,yb,wb,hb = cv2.boundingRect(contours_bu[i])
