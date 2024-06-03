@@ -91,22 +91,22 @@ class Annexe(object):
             xb,yb,wb,hb = cv2.boundingRect(contours_bu[i])
             center_bu = self.center(xb,yb,wb,hb)
             if area_bu > min_surface and  yb < self.mid_h and 5*self.mid_w<xb < self.width :
-                print(i)
+                #print(i)
                 if self.delta(center_bu,prev) < 30: 
                     cv2.rectangle(frame, (xb,yb),(xb+wb,yb+hb), (255,255,255),2)
-                    print("on a mis à jours center")
+                    #print("on a mis à jours center")
                     bu_count += 1
                     break
         return bu_count, bu_mask, center_bu
 
-    def detect_ball(self, image, min_surface,max_surface,lo,hi,pos_bu):
+    def detect_ball(self, image, min_surface,max_surface,lo,hi,pos_bu, blur, iter):
         """Renvoie le nombre de panier detecté, le mask et le point correspondant au centre du panier"""
         img = image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        image=cv2.blur(image, (10, 10))
+        image=cv2.blur(image, (blur, blur))
         mask=cv2.inRange(image, lo, hi)
-        mask=cv2.erode(mask, None, iterations=6)
-        mask=cv2.dilate(mask, None, iterations=6)
+        mask=cv2.erode(mask, None, iterations=iter)
+        mask=cv2.dilate(mask, None, iterations=iter)
         elements=cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         elements=sorted(elements, key=lambda x:cv2.contourArea(x), reverse=True)
         i = 0 
@@ -120,8 +120,8 @@ class Annexe(object):
                     x,y,r = round(x,None),round(y,None),round(r,None)
                     img = cv2.circle(img,(x,y),r,(0, 0, 255),2)
                     i+=1
-                    print("i vaut", i )
-                    print ("le rayon vaut : ",r)
+                    #print("i vaut", i )
+                    #print ("le rayon vaut : ",r)
                     break
             else:
                 break

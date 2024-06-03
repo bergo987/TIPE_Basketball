@@ -29,7 +29,10 @@ mid_h = 5*round((height/12))
 KF = KalmanFilter(0.1,[0,0],4)
 A = Annexe(width,height,mid_w,mid_h)
 
+iter_ba = 6
 nb_iter = 6
+blur_ba= 10
+blur_ba = 10
 
 score = 0
 nb_frame = 0 #sert a compter le nombre de frame entre deux paniers marqués 
@@ -49,9 +52,9 @@ while True :
         isclosed = 1 
         break
     #on commence par détecter les paniers
-    bu_count, bu_mask, pos_bu= A.detect_bu(frame, 200,bu_lower,bu_upper,prev_pos_bu, nb_iter)
+    bu_count, bu_mask, pos_bu= A.detect_bu(frame, 200,bu_lower,bu_upper,prev_pos_bu, nb_iter,blur_ba)
     prev_pos_bu = pos_bu
-    b_mask, img , pos_ba= A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu)
+    b_mask, img , pos_ba = A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu, blur_ba, iter_ba)
     
     etat=KF.predict().astype(np.int32)
     x,y = round(etat.item(0)),round(etat.item(1))
