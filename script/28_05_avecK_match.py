@@ -4,11 +4,12 @@ import numpy as np
 from Kalman import KalmanFilter,Annexe
 
 #déclaration des variables 
-lower = np.array([3, 125, 43]) 
-upper = np.array([14, 255, 156])
+lower = np.array([0, 90, 0]) 
+upper = np.array([8, 222, 140])
 
-bu_lower =np.array([3, 125, 43]) 
-bu_upper = np.array([14, 255, 156])
+
+bu_lower = np.array([0, 110, 50]) 
+bu_upper = np.array([10, 255, 200])
 prev_pos_bu = (-1,-1)
 
 width  = 0 
@@ -32,6 +33,8 @@ A = Annexe(width,height,mid_w,mid_h)
 score = 0
 nb_frame = 0 #sert a compter le nombre de frame entre deux paniers marqués 
 
+nb_iter = 7
+blur = 4
 print("hauteur : ", height, "largeur : ",width)
 print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
 
@@ -47,7 +50,10 @@ while True :
         isclosed = 1 
         break
     #on commence par détecter les paniers
-    bu_count, bu_mask, pos_bu= A.detect_bu(frame, 200,bu_lower,bu_upper,prev_pos_bu)
+    bu_count, bu_mask, pos_bu= A.detect_bu(frame, 200,bu_lower,bu_upper,prev_pos_bu, nb_iter,blur)
+    
+    if pos_bu == (-2,-2) or bu_count == 0:
+        print("Pas de panier détecter pour le moment")
     prev_pos_bu = pos_bu
     b_mask, img , pos_ba= A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu)
     
@@ -77,11 +83,11 @@ while True :
 
     cv2.imshow("Basketball Tracker", frame)
 
-       #if b_mask is not None:
-    #    cv2.imshow('ball',b_mask)
+    if b_mask is not None:
+        cv2.imshow('ball',b_mask)
 
-    if bu_mask is not None :
-        cv2.imshow('bu',bu_mask)
+    #if bu_mask is not None :
+    #   cv2.imshow('bu',bu_mask)
 
     # On quitte le programme si l'on presse Q lorsque l'on est sur la bonne fenêtre
     if cv2.waitKey(1) & 0xFF == ord('q'):
