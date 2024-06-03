@@ -4,8 +4,8 @@ import numpy as np
 from Kalman import KalmanFilter,Annexe
 
 #déclaration des variables 
-lower = np.array([0, 90, 0]) 
-upper = np.array([8, 222, 140])
+lower = np.array([0, 100, 40]) 
+upper = np.array([10, 255, 210])
 
 
 bu_lower = np.array([0, 110, 50]) 
@@ -33,8 +33,10 @@ A = Annexe(width,height,mid_w,mid_h)
 score = 0
 nb_frame = 0 #sert a compter le nombre de frame entre deux paniers marqués 
 
-nb_iter = 7
-blur = 4
+nb_iter = 7 #nb itération de l'erosion et de la dilatation 
+iter_ba = 10
+blur_bu = 8 
+blur_ba = 12
 print("hauteur : ", height, "largeur : ",width)
 print("1/2 hauteur : ", mid_h, "1/2 largeur : ",mid_w)
 
@@ -50,12 +52,12 @@ while True :
         isclosed = 1 
         break
     #on commence par détecter les paniers
-    bu_count, bu_mask, pos_bu= A.detect_bu(frame, 200,bu_lower,bu_upper,prev_pos_bu, nb_iter,blur)
+    bu_count, bu_mask, pos_bu= A.detect_bu(frame, 200,bu_lower,bu_upper,prev_pos_bu, nb_iter,blur_bu)
     
-    if pos_bu == (-2,-2) or bu_count == 0:
-        print("Pas de panier détecter pour le moment")
+    #if pos_bu == (-2,-2) or bu_count == 0:
+    #    print("Pas de panier détecter pour le moment")
     prev_pos_bu = pos_bu
-    b_mask, img , pos_ba= A.detect_ball(frame,0,1700,lower,upper, prev_pos_bu)
+    b_mask, img , pos_ba = A.detect_ball(frame,0,2000,lower,upper, prev_pos_bu, blur_ba, iter_ba)
     
     etat=KF.predict().astype(np.int32)
     x,y = round(etat.item(0)),round(etat.item(1))
@@ -64,7 +66,6 @@ while True :
 
     cv2.circle(frame, pos_ba, 10, (0, 0, 255), 2)
     KF.update(np.expand_dims(pos_ba, axis=-1))
-
 
     if A.scored(pos_ba,pos_bu):
         if nb_frame > 10: 
