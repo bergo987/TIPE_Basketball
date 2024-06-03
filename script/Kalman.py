@@ -75,10 +75,10 @@ class Annexe(object):
     def scored(self,c_ba, c_bu): 
         return self.delta(c_bu,c_ba) < 10
     
-    def detect_bu(self, frame,min_surface,lo,hi, prev,iter : int): 
-        """Renvoie un tableau trié par surface décroissante"""
+    def detect_bu(self, frame,min_surface : int ,lo,hi, prev,iter : int, par_blur: int): 
+        """Renvoie le nombre de panier detecté, le mask et le point correspondant au centre du panier"""
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        image=cv2.blur(hsv, (10, 10))
+        image=cv2.blur(hsv, (par_blur, par_blur))
         bu_mask=cv2.inRange(image, lo, hi)
         bu_mask=cv2.erode(bu_mask, None, iterations=iter)
         bu_mask=cv2.dilate(bu_mask, None, iterations=iter)
@@ -100,7 +100,7 @@ class Annexe(object):
         return bu_count, bu_mask, center_bu
 
     def detect_ball(self, image, min_surface,max_surface,lo,hi,pos_bu):
-        """Renvoie un tableau trié par surface décroissante"""
+        """Renvoie le nombre de panier detecté, le mask et le point correspondant au centre du panier"""
         img = image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         image=cv2.blur(image, (10, 10))
