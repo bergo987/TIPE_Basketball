@@ -82,11 +82,11 @@ while True :
 
     cv2.imshow("Basketball Tracker", frame)
 
-       #if b_mask is not None:
+    #if b_mask is not None:
     #    cv2.imshow('ball',b_mask)
 
-    if bu_mask is not None :
-        cv2.imshow('bu',bu_mask)
+    #if bu_mask is not None :
+    #    cv2.imshow('bu',bu_mask)
 
     # On quitte le programme si l'on presse Q lorsque l'on est sur la bonne fenêtre
     if cv2.waitKey(1) & 0xFF == ord('q'):
